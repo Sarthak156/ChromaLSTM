@@ -1,0 +1,24 @@
+# Python virtual environments
+/venv
+/env
+/.venv
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE configuration files
+.vscode/
+.idea/
+
+# Application-specific generated files
+/uploads/
+/results/
+
+# Ignore large model files, but keep the directory structure
+/checkpoints/*.pth
+
+# OS-specific files
+.DS_Store

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xLSTM.sys | Colorization Terminal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F8F7F4;
+            --text: #111111;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .font-mono {
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        .shadow-brutal {
+            box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+        }
+        .shadow-brutal-hover {
+            box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+            transform: translate(4px, 4px);
+        }
+        .shadow-brutal-sm {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+        }
+        
+        /* Slider specifics */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            overflow: hidden;
+            border: 3px solid black;
+            background: #eee;
+        }
+        .slider-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .slider-overlay {
+            clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+        }
+        input[type=range] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .slider-line {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 3px;
+            height: 100%;
+            background: black;
+            z-index: 5;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slider-handle {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border: 3px solid black;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brutalBg: '#F8F7F4',
+                        brutalText: '#111111',
+                        brutalSecondary: '#555555',
+                        brutalBlue: '#3B82F6',
+                        brutalGreen: '#00FF66',
+                        brutalYellow: '#FACC15',
+                        brutalRed: '#EF4444',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen flex flex-col items-center pb-12">
+    <!-- Navbar -->
+    <nav class="w-full border-b-[3px] border-black px-6 py-3 flex justify-between items-center bg-brutalBg z-50 sticky top-0">
+        <div class="flex items-center gap-2">
+            <i data-lucide="zap" class="w-6 h-6"></i>
+            <span class="font-bold text-xl uppercase tracking-wider">xLSTM_COLOR.SYS</span>
+        </div>
+        <div class="flex gap-4 items-center">
+            <div class="border-[3px] border-black bg-brutalYellow px-3 py-1 font-mono text-sm uppercase shadow-brutal-sm font-bold flex gap-2 items-center">
+                <span class="w-2 h-2 rounded-full bg-black block animate-pulse"></span>
+                [ STATUS: ONLINE ]
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="w-full max-w-[1300px] mt-12 px-6 grid grid-cols-1 gap-12 flex-grow">
+        
+        <!-- Hero Section -->
+        <header class="text-center flex flex-col items-center gap-6 mt-8">
+            <h1 class="text-7xl lg:text-[96px] font-black uppercase leading-[0.9] tracking-tight">
+                Intelligent<br>Image<br>Colorization.
+            </h1>
+            <p class="text-brutalSecondary text-xl max-w-2xl font-mono uppercase">
+                Proprietary pure-pytorch matrix-LSTM analysis protocol for restoring chromatic data to monochrome optical captures.
+            </p>
+        </header>
+
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 w-full">
+            
+            <!-- Left Column: Settings/Upload -->
+            <div class="col-span-1 flex flex-col gap-8">
+                <!-- Info Card -->
+                <div class="border-[3px] border-black bg-white p-6 shadow-brutal flex flex-col gap-4">
+                    <span class="text-brutalBlue font-mono text-sm uppercase font-bold">// ARCHITECTURE</span>
+                    <h2 class="text-3xl font-bold uppercase">System Specs</h2>
+                    <ul class="font-mono text-sm space-y-3 mt-4 border-t-[3px] border-black pt-4">
+                        <li class="flex justify-between items-center border-b border-black pb-2">
+                            <span>ENGINE</span>
+                            <span class="bg-black text-white px-2 py-0.5">xLSTM_v1</span>
+                        </li>
+                        <li class="flex justify-between items-center border-b border-black pb-2">
+                            <span>DIMENSIONS</span>
+                            <span class="bg-black text-white px-2 py-0.5">256px</span>
+                        </li>
+                        <li class="flex justify-between items-center border-b border-black pb-2">
+                            <span>LATENCY</span>
+                            <span class="bg-black text-white px-2 py-0.5">~120ms</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Upload Zone -->
+                <div class="border-[3px] border-black bg-white p-6 shadow-brutal flex flex-col gap-4">
+                    <span class="text-brutalBlue font-mono text-sm uppercase font-bold">// INPUT SECTOR</span>
+                    <h2 class="text-3xl font-bold uppercase">Load Data</h2>
+                    
+                    <div class="border-[3px] border-black border-dashed mt-2 p-12 flex flex-col items-center justify-center gap-4 bg-brutalBg hover:bg-black hover:text-white transition-colors duration-200 cursor-pointer group" onclick="document.getElementById('file-upload').click()">
+                        <i data-lucide="scan" class="w-12 h-12"></i>
+                        <h3 class="text-2xl font-bold uppercase">Insert File</h3>
+                        <p class="font-mono text-sm text-center opacity-80 group-hover:opacity-100">Click or drag target files into this zone</p>
+                        <div class="border-[2px] border-current px-2 py-1 font-mono text-xs mt-2 uppercase">.JPG / .PNG</div>
+                        <input type="file" id="file-upload" class="hidden" accept="image/png, image/jpeg" onchange="mockUpload()">
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- Right Column: Visualizer -->
+            <div class="col-span-1 lg:col-span-2 flex flex-col gap-8">
+                <!-- Visualizer Card -->
+                <div class="border-[3px] border-black bg-white p-6 shadow-brutal flex flex-col h-full gap-4 relative">
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <span class="text-brutalBlue font-mono text-sm uppercase font-bold">// OUTPUT TERMINAL</span>
+                            <h2 class="text-3xl font-bold uppercase">Analysis Result</h2>
+                        </div>
+                        <div class="hidden" id="status-badge">
+                            <span class="border-[3px] border-black bg-brutalGreen px-3 py-1 font-mono text-sm uppercase font-bold">OPERATION COMPLETE</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Pre-Upload State -->
+                    <div id="empty-state" class="slider-container flex items-center justify-center bg-brutalBg mt-4 flex-col gap-4">
+                        <i data-lucide="cpu" class="w-16 h-16 opacity-30"></i>
+                        <p class="font-mono uppercase opacity-50 font-bold">Awaiting target parameters...</p>
+                    </div>
+
+                    <!-- Post-Upload Slider (Hidden initially) -->
+                    <div id="slider-state" class="slider-container mt-4 hidden group">
+                        <!-- Black and White Image (Bottom) -->
+                        <img src="https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?q=80&w=1200&auto=format&fit=crop" style="filter: grayscale(100%);" alt="B&W">
+                        
+                        <!-- Colorized Image (Top / Clipped) -->
+                        <img src="https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?q=80&w=1200&auto=format&fit=crop" class="slider-overlay" id="color-layer" alt="Color">
+                        
+                        <!-- Input Control -->
+                        <input type="range" min="0" max="100" value="50" id="slider" oninput="updateSlider(this.value)">
+                        
+                        <!-- Visual Line -->
+                        <div class="slider-line" id="slider-line">
+                            <div class="slider-handle">
+                                <i data-lucide="move-horizontal" class="w-5 h-5 text-black"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex justify-end gap-4 mt-4 hidden" id="action-buttons">
+                        <button class="border-[3px] border-black px-6 py-3 font-bold uppercase flex gap-2 items-center hover:bg-black hover:text-white transition-all bg-brutalBg shadow-brutal active:shadow-none active:translate-y-[6px] active:translate-x-[6px]" onclick="resetUI()">
+                            <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                            Reset
+                        </button>
+                        <button class="border-[3px] border-black px-8 py-3 font-bold uppercase flex gap-2 items-center bg-black text-white hover:bg-white hover:text-black transition-all shadow-brutal active:shadow-none active:translate-y-[6px] active:translate-x-[6px]">
+                            <i data-lucide="download" class="w-5 h-5"></i>
+                            Export PNG
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- Metrics Table -->
+        <div class="border-[3px] border-black bg-white w-full mb-12 shadow-brutal overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b-[3px] border-black bg-brutalBg font-mono uppercase text-sm">
+                        <th class="p-4 border-r-[3px] border-black">Protocol ID</th>
+                        <th class="p-4 border-r-[3px] border-black">Target Resolution</th>
+                        <th class="p-4 border-r-[3px] border-black">Compute Nodes</th>
+                        <th class="p-4">Execution Status</th>
+                    </tr>
+                </thead>
+                <tbody class="font-mono text-sm">
+                    <tr class="border-b-[3px] border-black hover:bg-gray-50">
+                        <td class="p-4 border-r-[3px] border-black font-bold">XLS-8492-A</td>
+                        <td class="p-4 border-r-[3px] border-black">256 x 256 px</td>
+                        <td class="p-4 border-r-[3px] border-black">T4_GPU_01</td>
+                        <td class="p-4 text-brutalBlue font-bold">STANDBY</td>
+                    </tr>
+                    <tr class="border-b-[3px] border-black hover:bg-gray-50 bg-brutalBg">
+                        <td class="p-4 border-r-[3px] border-black font-bold">XLS-8491-B</td>
+                        <td class="p-4 border-r-[3px] border-black">512 x 512 px (Upcast)</td>
+                        <td class="p-4 border-r-[3px] border-black">T4_GPU_02</td>
+                        <td class="p-4 text-brutalGreen font-bold">COMPLETED</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer class="w-full border-t-[3px] border-black py-6 text-center mt-auto">
+        <p class="font-mono text-sm font-bold uppercase">
+            xLSTM_COLOR.SYS &copy; 2026 // RESTRICTED ACCESS
+        </p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        function updateSlider(val) {
+            document.getElementById('color-layer').style.clipPath = `polygon(0 0, ${val}% 0, ${val}% 100%, 0 100%)`;
+            document.getElementById('slider-line').style.left = `${val}%`;
+        }
+
+        function mockUpload() {
+            const btn = document.getElementById('empty-state');
+            btn.innerHTML = `<i data-lucide="loader" class="w-16 h-16 animate-spin"></i><p class="font-mono uppercase font-bold">Initializing Analysis Protocol...</p>`;
+            lucide.createIcons();
+            
+            setTimeout(() => {
+                document.getElementById('empty-state').classList.add('hidden');
+                document.getElementById('slider-state').classList.remove('hidden');
+                document.getElementById('action-buttons').classList.remove('hidden');
+                document.getElementById('status-badge').classList.remove('hidden');
+            }, 1500);
+        }
+
+        function resetUI() {
+            document.getElementById('empty-state').classList.remove('hidden');
+            document.getElementById('empty-state').innerHTML = `<i data-lucide="cpu" class="w-16 h-16 opacity-30"></i><p class="font-mono uppercase opacity-50 font-bold">Awaiting target parameters...</p>`;
+            document.getElementById('slider-state').classList.add('hidden');
+            document.getElementById('action-buttons').classList.add('hidden');
+            document.getElementById('status-badge').classList.add('hidden');
+            document.getElementById('slider').value = 50;
+            updateSlider(50);
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
